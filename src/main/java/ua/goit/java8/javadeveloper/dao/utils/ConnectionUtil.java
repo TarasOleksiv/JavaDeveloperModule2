@@ -1,4 +1,4 @@
-package ua.goit.java8.javadeveloper.dao;
+package ua.goit.java8.javadeveloper.dao.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -23,5 +23,9 @@ public class ConnectionUtil {
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASS);
+    }
+
+    public static Connection getConnection(String database) throws SQLException {
+        return DriverManager.getConnection(URL + database, USER, PASS);
     }
 }

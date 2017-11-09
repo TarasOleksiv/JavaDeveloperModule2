@@ -1,6 +1,8 @@
 package ua.goit.java8.javadeveloper;
 
-import ua.goit.java8.javadeveloper.dao.ConnectionUtil;
+import ua.goit.java8.javadeveloper.dao.utils.ConnectionUtil;
+import ua.goit.java8.javadeveloper.dao.utils.RunSqlScript;
+import ua.goit.java8.javadeveloper.view.MainMenu;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,14 +13,28 @@ import java.sql.Statement;
  * Created by t.oleksiv on 08/11/2017.
  */
 public class ConsoleApp {
-    public static void main(String[] args) throws SQLException {
+
+    public static final String DATABASE = "toleksiv";
+    public static final String INIT_DB_SQLFILEPATH = "src/main/resources/initDB.sql";
+    public static final String POPULATE_DB_SQLFILEPATH = "src/main/resources/populateDB.sql";
+
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+        if (!checkDB(DATABASE)) initializeDB(DATABASE);
+        new MainMenu();
+    }
+
+    private static boolean checkDB(String database) throws SQLException {
+        boolean existsDB = false;
         String sql = "SHOW databases;";
         Connection connectServer = ConnectionUtil.getConnection();
         Statement statement = connectServer.createStatement();
         ResultSet resultSet = statement.executeQuery(sql);
 
         while (resultSet.next()) {
-            System.out.println(resultSet.getString("Database"));
+            if(resultSet.getString("Database").equals(database)){
+                existsDB = true;
+                break;
+            }
         }
 
         try {
@@ -34,6 +50,22 @@ public class ConsoleApp {
             }
         }
 
+        System.out.println("База " + database + (existsDB?" - OK":" - відсутня"));
+        return existsDB;
+    }
+
+    private static void initializeDB(String database) throws SQLException, ClassNotFoundException {
+        System.out.println("**********************");
+        System.out.println("Створюємо робочу базу " + database + " ...");
+        System.out.println("**********************");
+        RunSqlScript.run(INIT_DB_SQLFILEPATH);
+        System.out.println("**********************");
+        System.out.println("Заливаємо дані у базу " + database + " ...");
+        System.out.println("**********************");
+        RunSqlScript.run(POPULATE_DB_SQLFILEPATH);
+        System.out.println("**********************");
+        System.out.println("База " + database + " успішно створена.");
+        System.out.println("**********************");
     }
 
 }
