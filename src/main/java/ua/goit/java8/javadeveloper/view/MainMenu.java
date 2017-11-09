@@ -20,7 +20,7 @@ public class MainMenu {
         String n = sc.nextLine().trim();
         switch (n) {
             case "1":
-                //chooseCarTask();
+                new DevelopersMenu();
                 break;
             default:
                 System.out.println("Ви закінчили виконання програми.");
