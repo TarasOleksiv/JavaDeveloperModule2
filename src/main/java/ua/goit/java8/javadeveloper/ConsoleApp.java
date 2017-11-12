@@ -14,12 +14,10 @@ import java.sql.Statement;
  */
 public class ConsoleApp {
 
-    public static final String DATABASE = "toleksiv";
-    public static final String INIT_DB_SQLFILEPATH = "src/main/resources/initDB.sql";
-    public static final String POPULATE_DB_SQLFILEPATH = "src/main/resources/populateDB.sql";
+    public static final Settings settings = new Settings();
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        if (!checkDB(DATABASE)) initializeDB(DATABASE);
+        if (!checkDB(settings.getDatabase())) initializeDB(settings.getDatabase());
         new MainMenu();
     }
 
@@ -42,10 +40,10 @@ public class ConsoleApp {
             statement.close();
             connectServer.close();
         } finally {
-            if(statement !=null){
+            if(statement != null){
                 statement.close();
             }
-            if(connectServer!=null){
+            if(connectServer != null){
                 connectServer.close();
             }
         }
@@ -58,11 +56,11 @@ public class ConsoleApp {
         System.out.println("**********************");
         System.out.println("Створюємо робочу базу " + database + " ...");
         System.out.println("**********************");
-        RunSqlScript.run(INIT_DB_SQLFILEPATH);
+        RunSqlScript.run(settings.getInitDBSqlPath());
         System.out.println("**********************");
         System.out.println("Заливаємо дані у базу " + database + " ...");
         System.out.println("**********************");
-        RunSqlScript.run(POPULATE_DB_SQLFILEPATH);
+        RunSqlScript.run(settings.getPopulateDBSqlPath());
         System.out.println("**********************");
         System.out.println("База " + database + " успішно створена.");
         System.out.println("**********************");

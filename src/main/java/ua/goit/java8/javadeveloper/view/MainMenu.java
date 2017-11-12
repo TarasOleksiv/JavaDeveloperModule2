@@ -26,19 +26,19 @@ public class MainMenu {
         String n = sc.nextLine().trim();
         switch (n) {
             case "1":   //Companies
-                //new CompaniesMenu();
+                new CompaniesMenu();
                 break;
             case "2":   //Customers
-                //new CustomersMenu();
+                new CustomersMenu();
                 break;
             case "3":   //Skills
-                //new SkillsMenu();
+                new SkillsMenu();
                 break;
             case "4":   //Developers
                 new DevelopersMenu();
                 break;
             case "5":   //Projects
-                //new ProjectsMenu();
+                new ProjectsMenu();
                 break;
             default:
                 System.out.println("Ви закінчили виконання програми.");

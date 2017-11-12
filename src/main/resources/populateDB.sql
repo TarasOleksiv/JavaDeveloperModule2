@@ -1,20 +1,20 @@
 USE toleksiv;
 # 01. Populate companies;
-INSERT INTO companies (name, address) VALUES
-  ('Eleks', 'Address1'),
-  ('Epam', 'Address2'),
-  ('Conscensia', 'Address3'),
-  ('SoftServe', 'Address4'),
-  ('Vakoms', 'Address5');
+INSERT INTO companies (name) VALUES
+  ('Eleks'),
+  ('Epam'),
+  ('Conscensia'),
+  ('SoftServe'),
+  ('Vakoms');
 # 02. Populate customers;
-INSERT INTO customers (name, address) VALUES
-  ('Bosch', 'Address1'),
-  ('Bayern', 'Address2'),
-  ('Toyota', 'Address3'),
-  ('Denim', 'Address4'),
-  ('Levis', 'Address5'),
-  ('Sony', 'Address6'),
-  ('Asics', 'Address7');
+INSERT INTO customers (name) VALUES
+  ('Bosch'),
+  ('Bayern'),
+  ('Toyota'),
+  ('Denim'),
+  ('Levis'),
+  ('Sony'),
+  ('Asics');
 # 03. Populate skills;
 INSERT INTO skills (name) VALUES
   ('PHP'),

@@ -6,18 +6,16 @@ USE toleksiv;
 CREATE TABLE companies (
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(45) NOT NULL,
-  address VARCHAR(45) NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE INDEX COMPANY_IDX (name ASC, address ASC))
+  UNIQUE INDEX COMPANY_IDX (name ASC))
   ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8;
 # 02. Create table customers;
 CREATE TABLE customers (
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(45) NOT NULL,
-  address VARCHAR(45) NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE INDEX CUSTOMER_IDX (name ASC, address ASC))
+  UNIQUE INDEX CUSTOMER_IDX (name ASC))
   ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8;
 # 03. Create table skills;

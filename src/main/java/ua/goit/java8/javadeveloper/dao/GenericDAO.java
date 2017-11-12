@@ -8,7 +8,7 @@ import java.util.List;
  */
 public interface GenericDAO<T, ID> {
 
-    T getById(ID id) throws SQLException;
+    T getById(ID id);
 
     List<T> getAll();
 
@@ -17,4 +17,5 @@ public interface GenericDAO<T, ID> {
     void update(T t);
 
     void delete(T t);
+
 }
