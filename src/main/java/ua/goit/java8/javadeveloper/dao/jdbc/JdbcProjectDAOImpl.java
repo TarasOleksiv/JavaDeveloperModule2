@@ -2,6 +2,7 @@ package ua.goit.java8.javadeveloper.dao.jdbc;
 
 import ua.goit.java8.javadeveloper.dao.ProjectDAO;
 import ua.goit.java8.javadeveloper.dao.utils.ConnectionUtil;
+import ua.goit.java8.javadeveloper.model.Developer;
 import ua.goit.java8.javadeveloper.model.Project;
 
 import java.math.BigDecimal;
@@ -197,6 +198,120 @@ public class JdbcProjectDAOImpl extends JdbcAbstractDAO implements ProjectDAO {
                 System.out.println("Неможливо видалити проект.");
             }
             System.out.println("**********************************");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeAll(true);
+        }
+    }
+
+    // вивести всіх девелоперів на проекті
+    public Project getDevelopersById(Long aLong){
+        String sql = "SELECT projects.id AS project_id, projects.name AS project_name, developers.* FROM projects\n" +
+                "LEFT JOIN developer_projects ON projects.id = developer_projects.project_id\n" +
+                "LEFT JOIN developers ON developer_projects.developer_id = developers.id\n" +
+                "WHERE projects.id = ?";
+
+        Project project = new Project();
+        List<Developer> developers = new ArrayList<>();
+        try {
+            connection = ConnectionUtil.getConnectionDB();
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1,aLong);
+            resultSet = preparedStatement.executeQuery();
+            Long projectId = null;
+            String projectName = null;
+            Long developerId = null;
+            String firstName = null;
+            String lastName = null;
+            Long company_id = null;
+            BigDecimal salary = null;
+            while (resultSet.next()) {
+                projectId = resultSet.getLong("project_id");
+                projectName = resultSet.getString("project_name");
+                developerId = resultSet.getLong("id");
+                firstName = resultSet.getString("firstname");
+                lastName = resultSet.getString("lastname");
+                company_id = resultSet.getLong("company_id");
+                salary = resultSet.getBigDecimal("salary");
+                Developer developer = new Developer();
+                developer.withId(developerId)
+                        .withFirstName(firstName)
+                        .withLastName(lastName)
+                        .withCompany_id(company_id)
+                        .withSalary(salary);
+                developers.add(developer);
+            }
+            project.withId(projectId)
+                    .withName(projectName)
+                    .withDevelopers(developers);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeAll(false);
+        }
+
+        return project;
+    }
+
+    // додати девелопера на проект
+    public void addDeveloper(Long project_id, Long developer_id){
+        String sql = "INSERT INTO developer_projects (project_id, developer_id) VALUES (?, ?)";
+        String sqlCheck = "SELECT * FROM developer_projects WHERE project_id = ? AND developer_id = ?"; // перевірка чи така пара вже існує
+
+        try {
+            connection = ConnectionUtil.getConnectionDB();
+            preparedStatement = connection.prepareStatement(sqlCheck);
+            preparedStatement.setLong(1,project_id);
+            preparedStatement.setLong(2,developer_id);
+            resultSet = preparedStatement.executeQuery();
+            if (!resultSet.next()){
+                try {
+                    resultSet.close();
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setLong(1,project_id);
+                preparedStatement.setLong(2,developer_id);
+                resultSetUpdate = preparedStatement.executeUpdate();
+                if (resultSetUpdate > 0){
+                    System.out.println("Девелопера на проект додано успішно.");
+                } else {
+                    System.out.println("Неможливо додати девелопера на проект.");
+                }
+
+            } else {
+                System.out.println("Такий девелопер на проекті вже існує.");
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeAll(true);
+        }
+    }
+
+    // вилучити девелопера з проекту
+    public void deleteDeveloper(Long project_id, Long developer_id){
+        String sql = "DELETE FROM developer_projects WHERE project_id = ? AND developer_id = ?";
+
+        try {
+            connection = ConnectionUtil.getConnectionDB();
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1,project_id);
+            preparedStatement.setLong(2,developer_id);
+            resultSetUpdate = preparedStatement.executeUpdate();
+            if (resultSetUpdate > 0){
+                System.out.println("девелопера з проекту вилучено успішно.");
+            } else {
+                System.out.println("Неможливо вилучити девелопера з проекту.");
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

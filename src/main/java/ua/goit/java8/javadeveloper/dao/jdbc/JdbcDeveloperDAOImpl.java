@@ -3,6 +3,7 @@ package ua.goit.java8.javadeveloper.dao.jdbc;
 import ua.goit.java8.javadeveloper.dao.DeveloperDAO;
 import ua.goit.java8.javadeveloper.dao.utils.ConnectionUtil;
 import ua.goit.java8.javadeveloper.model.Developer;
+import ua.goit.java8.javadeveloper.model.Skill;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -195,4 +196,113 @@ public class JdbcDeveloperDAOImpl extends JdbcAbstractDAO implements DeveloperDA
         }
     }
 
+    public Developer getSkillsById(Long aLong){
+
+        String sql = "SELECT developers.*, developer_skills.skill_id, skills.name as skill_name FROM \n" +
+                "developers LEFT JOIN developer_skills\n" +
+                "ON developers.id = developer_skills.developer_id\n" +
+                "LEFT JOIN skills\n" +
+                "ON developer_skills.skill_id = skills.id\n" +
+                "WHERE developers.id = ?";
+        Developer developer = new Developer();
+        List<Skill> skills = new ArrayList<>();
+        try {
+            connection = ConnectionUtil.getConnectionDB();
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1,aLong);
+            resultSet = preparedStatement.executeQuery();
+            Long developerId = null;
+            String firstName = null;
+            String lastName = null;
+            Long company_id = null;
+            BigDecimal salary = null;
+            while (resultSet.next()) {
+                developerId = resultSet.getLong("id");
+                firstName = resultSet.getString("firstname");
+                lastName = resultSet.getString("lastname");
+                company_id = resultSet.getLong("company_id");
+                salary = resultSet.getBigDecimal("salary");
+                Long skill_id = resultSet.getLong("skill_id");
+                String skill_name = resultSet.getNString("skill_name");
+                Skill skill = new Skill();
+                skill.withId(skill_id).withName(skill_name);
+                skills.add(skill);
+            }
+            developer.withId(developerId)
+                    .withFirstName(firstName)
+                    .withLastName(lastName)
+                    .withCompany_id(company_id)
+                    .withSalary(salary)
+                    .withSkills(skills);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeAll(false);
+        }
+
+        return developer;
+    }
+
+    public void addSkill(Long developer_id, Long skill_id){
+        String sql = "INSERT INTO developer_skills (developer_id, skill_id) VALUES (?, ?)";
+        String sqlCheck = "SELECT * FROM developer_skills WHERE developer_id = ? AND skill_id = ?"; // перевірка чи така пара вже існує
+
+        try {
+            connection = ConnectionUtil.getConnectionDB();
+            preparedStatement = connection.prepareStatement(sqlCheck);
+            preparedStatement.setLong(1,developer_id);
+            preparedStatement.setLong(2,skill_id);
+            resultSet = preparedStatement.executeQuery();
+            if (!resultSet.next()){
+                try {
+                    resultSet.close();
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setLong(1,developer_id);
+                preparedStatement.setLong(2,skill_id);
+                resultSetUpdate = preparedStatement.executeUpdate();
+                if (resultSetUpdate > 0){
+                    System.out.println("Скіл для девелопера додано успішно.");
+                } else {
+                    System.out.println("Неможливо додати скіл для девелопера.");
+                }
+
+            } else {
+                System.out.println("Такий скіл девелопера вже існує.");
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeAll(true);
+        }
+    }
+
+    public void deleteSkill(Long developer_id, Long skill_id){
+        String sql = "DELETE FROM developer_skills WHERE developer_id = ? AND skill_id = ?";
+
+        try {
+            connection = ConnectionUtil.getConnectionDB();
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1,developer_id);
+            preparedStatement.setLong(2,skill_id);
+            resultSetUpdate = preparedStatement.executeUpdate();
+            if (resultSetUpdate > 0){
+                System.out.println("Скіл для девелопера вилучено успішно.");
+            } else {
+                System.out.println("Неможливо вилучити скіл для девелопера.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeAll(true);
+        }
+    }
 }

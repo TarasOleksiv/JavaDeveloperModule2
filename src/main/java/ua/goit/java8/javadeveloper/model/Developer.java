@@ -4,6 +4,7 @@ package ua.goit.java8.javadeveloper.model;
  * Created by t.oleksiv on 09/11/2017.
  */
 import java.math.BigDecimal;
+import java.util.List;
 
 public class Developer {
     private Long id;
@@ -11,16 +12,18 @@ public class Developer {
     private String lastName;
     private Long company_id;
     private BigDecimal salary;
+    private List<Skill> skills;
 
     public Developer() {
     }
 
-    public Developer(Long id, String firstName, String lastName, Long company_id, BigDecimal salary) {
+    public Developer(Long id, String firstName, String lastName, Long company_id, BigDecimal salary, List<Skill> skills) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.company_id = company_id;
         this.salary = salary;
+        this.skills = skills;
     }
 
     public Long getId() {
@@ -63,6 +66,14 @@ public class Developer {
         this.salary = salary;
     }
 
+    public List<Skill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
+    }
+
     public Developer withId(Long id){
         this.id = id;
         return this;
@@ -88,6 +99,11 @@ public class Developer {
         return this;
     }
 
+    public Developer withSkills(List<Skill> skills){
+        this.skills = skills;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Developer{" +
@@ -97,5 +113,22 @@ public class Developer {
                 ", company_id='" + company_id + '\'' +
                 ", salary=" + salary +
                 '}';
+    }
+
+    private String showSkills(){
+        String result = "";
+        for (Skill skill: skills){
+            result += skill.getName() + ",";
+        }
+        return result;
+    }
+
+    public String showDeveloperSkills(){
+        return "Developer{" +
+                firstName + " " +
+                lastName + "; " +
+                "{Skills: " +
+                showSkills() +
+                "}}";
     }
 }

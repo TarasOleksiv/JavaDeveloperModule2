@@ -1,6 +1,7 @@
 package ua.goit.java8.javadeveloper.model;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by Taras on 11.11.2017.
@@ -11,16 +12,18 @@ public class Project {
     private Long customer_id;
     private Long company_id;
     private BigDecimal costs;
+    private List<Developer> developers;
 
     public Project() {
     }
 
-    public Project(Long id, String name, Long customer_id, Long company_id, BigDecimal costs) {
+    public Project(Long id, String name, Long customer_id, Long company_id, BigDecimal costs, List<Developer> developers) {
         this.id = id;
         this.name = name;
         this.customer_id = customer_id;
         this.company_id = company_id;
         this.costs = costs;
+        this.developers = developers;
     }
 
     public Long getId() {
@@ -63,6 +66,14 @@ public class Project {
         this.costs = costs;
     }
 
+    public List<Developer> getDevelopers() {
+        return developers;
+    }
+
+    public void setDevelopers(List<Developer> developers) {
+        this.developers = developers;
+    }
+
     public Project withId(Long id){
         this.id = id;
         return this;
@@ -88,6 +99,11 @@ public class Project {
         return this;
     }
 
+    public Project withDevelopers(List<Developer> developers){
+        this.developers = developers;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Project{" +
@@ -97,5 +113,21 @@ public class Project {
                 ", company_id='" + company_id + '\'' +
                 ", costs=" + costs +
                 '}';
+    }
+
+    private String showDevelopers(){
+        String result = "";
+        for (Developer developer: developers){
+            result += developer.getFirstName() + " " + developer.getLastName() + ",";
+        }
+        return result;
+    }
+
+    public String showProjectDevelopers(){
+        return "Project{" +
+                name + "; " +
+                "{Developers: " +
+                showDevelopers() +
+                "}}";
     }
 }
